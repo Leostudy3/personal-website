@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leo Li · 生活与技术</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #1d1d1f;
+  background: #ffffff;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ===== Navigation ===== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease;
+}
+
+.nav-inner {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 32px;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 400;
+  color: #6e6e73;
+  transition: color 0.2s ease;
+  letter-spacing: -0.01em;
+}
+
+.nav-links a:hover {
+  color: #1d1d1f;
+}
+
+/* Mobile nav toggle */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: #1d1d1f;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* ===== Hero ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+}
+
+.hero-content {
+  max-width: 720px;
+}
+
+.hero-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
+  margin: 0 auto 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 500;
+  color: #86868b;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.hero h1 {
+  font-size: clamp(40px, 8vw, 72px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  color: #1d1d1f;
+}
+
+.hero h2 {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 400;
+  color: #6e6e73;
+  letter-spacing: -0.01em;
+  margin-bottom: 32px;
+  line-height: 1.4;
+}
+
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.hero-tags span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0071e3;
+  background: rgba(0, 113, 227, 0.06);
+  padding: 6px 16px;
+  border-radius: 20px;
+  letter-spacing: -0.01em;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.4;
+  animation: float 2s ease-in-out infinite;
+}
+
+.scroll-indicator svg {
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ===== Sections Common ===== */
+.section {
+  padding: 120px 24px;
+}
+
+.section-inner {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0071e3;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+  color: #1d1d1f;
+  line-height: 1.15;
+}
+
+.section-desc {
+  font-size: 18px;
+  color: #6e6e73;
+  margin-bottom: 56px;
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+/* ===== Blog ===== */
+.blog-section {
+  background: #f5f5f7;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.blog-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.blog-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 113, 227, 0.06), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+.blog-card:hover::before {
+  opacity: 1;
+}
+
+.blog-card-date {
+  font-size: 13px;
+  color: #86868b;
+  font-weight: 500;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.blog-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  color: #1d1d1f;
+  line-height: 1.3;
+}
+
+.blog-card p {
+  font-size: 15px;
+  color: #6e6e73;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.blog-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-card-tags span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #86868b;
+  background: #f5f5f7;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.blog-card-arrow {
+  position: absolute;
+  right: 32px;
+  bottom: 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f5f5f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover .blog-card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===== Skills ===== */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.skill-item {
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: #f5f5f7;
+  transition: all 0.3s ease;
+}
+
+.skill-item:hover {
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.skill-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.skill-item h4 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: #1d1d1f;
+}
+
+.skill-item p {
+  font-size: 14px;
+  color: #6e6e73;
+  line-height: 1.5;
+}
+
+/* ===== Experience Timeline ===== */
+.experience-section {
+  background: #f5f5f7;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 48px;
+  cursor: default;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -36px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0071e3;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+}
+
+.timeline-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: #86868b;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.timeline-item h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  color: #1d1d1f;
+}
+
+.timeline-role {
+  font-size: 15px;
+  color: #0071e3;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.timeline-item p {
+  font-size: 15px;
+  color: #6e6e73;
+  line-height: 1.6;
+}
+
+/* ===== Projects ===== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.project-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f5f5f7;
+  transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.project-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #e8e8ed 0%, #d2d2d7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #ffffff;
+}
+
+.project-info {
+  padding: 24px;
+}
+
+.project-info h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: #1d1d1f;
+}
+
+.project-info p {
+  font-size: 14px;
+  color: #6e6e73;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.project-tech span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #0071e3;
+  background: rgba(0, 113, 227, 0.06);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+/* ===== About ===== */
+.about-section {
+  background: #1d1d1f;
+  color: #f5f5f7;
+}
+
+.about-section .section-label {
+  color: #86868b;
+}
+
+.about-section .section-title {
+  color: #f5f5f7;
+}
+
+.about-section .section-desc {
+  color: #a1a1a6;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-text p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #a1a1a6;
+  margin-bottom: 20px;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stat-item {
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.3s ease;
+}
+
+.stat-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f5f5f7;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #86868b;
+}
+
+/* ===== Footer ===== */
+.footer {
+  background: #1d1d1f;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 32px 24px;
+}
+
+.footer-inner {
+  max-width: 1024px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copy {
+  font-size: 13px;
+  color: #86868b;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: #a1a1a6;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #f5f5f7;
+}
+
+/* ===== Blog Detail Modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 24px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close {
+  position: sticky;
+  top: 16px;
+  right: 16px;
+  float: right;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f5f7;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d1d1f;
+  transition: background 0.2s ease;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: #e8e8ed;
+}
+
+.modal-body {
+  padding: 40px;
+  clear: right;
+}
+
+.modal-body .blog-meta {
+  font-size: 13px;
+  color: #86868b;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.modal-body h2 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  line-height: 1.2;
+  color: #1d1d1f;
+}
+
+.modal-body .blog-content {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #424245;
+}
+
+.modal-body .blog-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin: 32px 0 12px;
+}
+
+.modal-body .blog-content p {
+  margin-bottom: 16px;
+}
+
+.modal-body .blog-content pre {
+  background: #f5f5f7;
+  border-radius: 12px;
+  padding: 20px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 20px 0;
+  font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+}
+
+.modal-body .blog-content code {
+  font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+  font-size: 14px;
+  background: #f5f5f7;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.modal-body .blog-content pre code {
+  background: none;
+  padding: 0;
+}
+
+/* ===== Animations ===== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 52px;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+
+  .nav-links.open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+  }
+
+  .section {
+    padding: 80px 24px;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .blog-grid,
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .modal-body {
+    padding: 24px;
+  }
+
+  .modal-body h2 {
+    font-size: 24px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Leo Li</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#blog">博客</a></li>
+      <li><a href="#skills">兴趣</a></li>
+      <li><a href="#experience">经验</a></li>
+      <li><a href="#projects">项目</a></li>
+      <li><a href="#about">关于</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-avatar fade-in">👋</div>
+    <h1 class="fade-in">你好，我是 Leo</h1>
+    <h2 class="fade-in">保持好奇，记录生活。<br>这里有些技术笔记，也有些旅途见闻。</h2>
+    <div class="hero-tags fade-in">
+      <span>技术</span>
+      <span>旅行</span>
+      <span>摄影</span>
+      <span>阅读</span>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<!-- Blog -->
+<section class="section blog-section" id="blog">
+  <div class="section-inner">
+    <div class="section-label fade-in">Blog</div>
+    <h2 class="section-title fade-in">技术博客</h2>
+    <p class="section-desc fade-in">技术思考与生活随笔，想到什么就写什么。</p>
+    <div class="blog-grid" id="blogGrid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="section" id="skills">
+  <div class="section-inner">
+    <div class="section-label fade-in">Interest</div>
+    <h2 class="section-title fade-in">兴趣方向</h2>
+    <p class="section-desc fade-in">工作之余，这些是我花时间最多的领域。</p>
+    <div class="skills-grid">
+      <div class="skill-item fade-in">
+        <div class="skill-icon">💻</div>
+        <h4>软件开发</h4>
+        <p>喜欢用代码解决问题，关注前端和后端技术，偶尔写点技术博客记录心得</p>
+      </div>
+      <div class="skill-item fade-in">
+        <div class="skill-icon">✈️</div>
+        <h4>旅行探索</h4>
+        <p>喜欢探索新的城市和风景，用相机记录旅途中的瞬间</p>
+      </div>
+      <div class="skill-item fade-in">
+        <div class="skill-icon">📷</div>
+        <h4>摄影</h4>
+        <p>街拍和风光摄影爱好者，在光影中寻找故事</p>
+      </div>
+      <div class="skill-item fade-in">
+        <div class="skill-icon">📚</div>
+        <h4>阅读</h4>
+        <p>技术、科幻、人文都有涉猎，保持阅读是保持好奇心的方式</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience -->
+<section class="section experience-section" id="experience">
+  <div class="section-inner">
+    <div class="section-label fade-in">Experience</div>
+    <h2 class="section-title fade-in">技术经验</h2>
+    <p class="section-desc fade-in">从代码到架构，这些年积累的实战经验。</p>
+    <div class="timeline">
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2024 - 至今</div>
+        <h3>大规模微服务架构演进</h3>
+        <div class="timeline-role">架构师视角</div>
+        <p>主导团队从单体应用向微服务架构的迁移，涉及服务拆分策略、API 网关设计、分布式事务处理以及可观测性体系建设。通过渐进式重构降低风险，实现零停机迁移。</p>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2023 - 2024</div>
+        <h3>前端性能优化体系</h3>
+        <div class="timeline-role">工程实践</div>
+        <p>建立前端性能监控与优化体系，包括 Core Web Vitals 指标体系搭建、SSR/SSG 渲染策略选择、Bundle 体积优化（从 2.8MB 降至 460KB）、图片与字体加载策略优化。</p>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2022 - 2023</div>
+        <h3>开源项目贡献</h3>
+        <div class="timeline-role">社区参与</div>
+        <p>持续参与多个开源项目的贡献与维护，包括提交 PR、文档改进、Issue 解答。在开源社区中学习到了代码协作的最佳实践和高质量代码的标准。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section class="section" id="projects">
+  <div class="section-inner">
+    <div class="section-label fade-in">Projects</div>
+    <h2 class="section-title fade-in">精选项目</h2>
+    <p class="section-desc fade-in">一些有意思的技术探索。</p>
+    <div class="projects-grid">
+      <div class="project-card fade-in">
+        <div class="project-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🚀</div>
+        <div class="project-info">
+          <h3>分布式任务调度平台</h3>
+          <p>基于 Go + Redis 的轻量级分布式任务调度系统，支持定时任务、工作流编排和故障自动恢复。</p>
+          <div class="project-tech">
+            <span>Go</span><span>Redis</span><span>gRPC</span><span>Kubernetes</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card fade-in">
+        <div class="project-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎨</div>
+        <div class="project-info">
+          <h3>设计系统组件库</h3>
+          <p>企业级 React 组件库，基于 Radix UI 构建，支持主题定制、无障碍访问和完整的 TypeScript 类型推导。</p>
+          <div class="project-tech">
+            <span>React</span><span>TypeScript</span><span>Storybook</span><span>CSS-in-JS</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card fade-in">
+        <div class="project-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">📊</div>
+        <div class="project-info">
+          <h3>实时数据可视化平台</h3>
+          <p>基于 WebSocket 的实时数据监控面板，支持自定义仪表盘配置和多种图表类型的动态渲染。</p>
+          <div class="project-tech">
+            <span>Vue 3</span><span>D3.js</span><span>WebSocket</span><span>Canvas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="section about-section" id="about">
+  <div class="section-inner">
+    <div class="section-label fade-in">About</div>
+    <h2 class="section-title fade-in">关于我</h2>
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <p>我是一名软件开发者，对技术保持热情，也热爱生活中的美好事物。这个网站是我记录和分享的地方——技术笔记、旅行见闻、或者随便什么想写的东西。</p>
+        <p>在工作之余，我喜欢旅行、摄影和阅读。我觉得代码和相机都是工具，它们的共同点是帮助我们理解和表达这个世界。</p>
+        <p>如果你对我的文字感兴趣，或者想聊聊技术和旅行，欢迎随时联系我。</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-number">5+</div>
+          <div class="stat-label">年开发经验</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">技术文章</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">10+</div>
+          <div class="stat-label">开源项目</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">3+</div>
+          <div class="stat-label">技术分享</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="footer-copy">&copy; 2026 Leo Li. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="#">GitHub</a></li>
+      <li><a href="#">Twitter</a></li>
+      <li><a href="#">Email</a></li>
+    </ul>
+  </div>
+</footer>
+
+<!-- Blog Detail Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ===== Blog Data =====
+const blogPosts = [
+  {
+    id: 1,
+    date: '2026-06-01',
+    title: '探索京都：古都漫步日记',
+    excerpt: '在京都待了一周，走遍了岚山、清水寺、伏见稻荷。分享一些喜欢的照片和路线。',
+    tags: ['旅行', '摄影', '京都'],
+    content: `<p>京都一直是我愿望清单上的城市。这次终于成行，待了整整一周，依然觉得不够。</p>
+<h3>Day 1-2：岚山竹林</h3>
+<p>第一站去了岚山。穿过那片竹林的时候，阳光从竹叶间洒下来，那种光影真的很难用照片完全捕捉。建议早上去，人少很多。</p>
+<p>岚山的小火车也很有意思，沿着保津川慢慢开，两边的山景很漂亮。秋天来应该更美。</p>
+<h3>Day 3-4：寺庙巡礼</h3>
+<p>清水寺、金阁寺、龙安寺——每个都有自己的气质。龙安寺的枯山水石庭让我坐了很久，15块石头无论从哪个角度看都不能同时看到全部，挺有意思的设计。</p>
+<p>伏见稻荷大社的千本�的鸟居比想象中长很多，一路走到山顶大概花了2小时。</p>
+<h3>一些实用建议</h3>
+<p>交通买张 ICOCA 卡很方便。住宿推荐住在祇园附近，晚上散步很有氛围。吃的话，锦市场可以逛一下，但更推荐去小巷子里找当地人吃的小店。</p>`
+  },
+  {
+    id: 2,
+    date: '2026-05-15',
+    title: '构建可扩展的前端架构：从组件到微前端',
+    excerpt: '探讨如何从组件设计出发，逐步构建可扩展的前端架构，涵盖模块化、状态管理和微前端的实践思考。',
+    tags: ['前端架构', '微前端', '组件设计'],
+    content: `<p>在现代前端开发中，随着应用规模的增长，如何保持代码的可维护性和可扩展性成为了核心挑战。本文从实际项目经验出发，分享我在构建可扩展前端架构方面的一些思考。</p>
+<h3>组件设计的三个层次</h3>
+<p>一个好的前端架构，始于良好的组件设计。经过多个项目的实践，我将组件分为三个层次：</p>
+<p><strong>原子组件（Atoms）</strong> — 最基础的可复用 UI 单元，如 Button、Input、Tag。它们不包含业务逻辑，只负责渲染和基本的交互反馈。</p>
+<p><strong>组合组件（Molecules）</strong> — 由原子组件组合而成的功能模块，如 SearchBar、UserCard。它们封装了特定的交互逻辑，但仍然是业务无关的。</p>
+<p><strong>业务组件（Organisms）</strong> — 与具体业务场景绑定的组件，如 OrderList、Dashboard。它们负责数据的获取、处理和业务逻辑的编排。</p>
+<h3>状态管理的进化路径</h3>
+<p>在状态管理方面，我倾向于遵循"渐进增强"的原则：</p>
+<pre><code>// 优先级 1：组件内部状态 — 使用 useState/ref
+const [isOpen, setIsOpen] = useState(false)
+
+// 优先级 2：跨组件共享 — 使用 Context 或状态管理库
+const { user, login } = useAuth()
+
+// 优先级 3：服务端状态 — 使用 React Query/SWR
+const { data } = useQuery(['posts'], fetchPosts)</code></pre>
+<p>关键原则是：不要让状态过早地离开它所属的组件。只有在确实需要跨组件共享时，才提升状态。</p>
+<h3>微前端的取舍</h3>
+<p>微前端不是银弹。在决定是否采用微前端方案时，我会问三个问题：团队是否独立？技术栈是否需要异构？部署是否需要独立？如果答案都是肯定的，微前端才是一个合理的选择。</p>
+<p>在实践层面，我更推荐 Module Federation 而非 iframe 方案，因为它在运行时性能、共享依赖和开发体验上都有明显优势。</p>`
+  },
+  {
+    id: 2,
+    date: '2026-05-15',
+    title: 'TypeScript 高级类型实战：从入门到类型体操',
+    excerpt: '深入 TypeScript 类型系统，通过实际案例展示条件类型、模板字面量类型和 infer 关键字的强大用法。',
+    tags: ['TypeScript', '类型系统', '进阶'],
+    content: `<p>TypeScript 的类型系统是图灵完备的，这意味着你可以在类型层面进行编程。本文通过几个实际案例，展示 TypeScript 高级类型的威力。</p>
+<h3>条件类型与 infer</h3>
+<p>条件类型是 TypeScript 类型体操的核心工具。配合 infer 关键字，我们可以实现强大的类型推断：</p>
+<pre><code>// 提取 Promise 的内部类型
+type Unwrap&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T
+
+// 提取函数返回类型（内置 ReturnType 的实现）
+type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never
+
+// 提取数组元素类型
+type ElementOf&lt;T&gt; = T extends (infer E)[] ? E : never</code></pre>
+<h3>模板字面量类型</h3>
+<p>TypeScript 4.1 引入的模板字面量类型让我们可以在类型层面操作字符串：</p>
+<pre><code>// 为对象的所有 key 添加前缀
+type Prefixed&lt;T, P extends string&gt; = {
+  [K in keyof T as \`\${P}\${string & K}\`]: T[K]
+}
+
+// 使用示例
+interface User { id: number; name: string }
+type PrefixedUser = Prefixed&lt;User, 'user_'&gt;
+// { user_id: number; user_name: string }</code></pre>
+<p>这些技巧在实际项目中非常实用，特别是在构建类型安全的 API 客户端和表单库时。</p>`
+  },
+  {
+    id: 3,
+    date: '2026-04-20',
+    title: 'Go 并发编程实践：从 Goroutine 到 Channel 设计模式',
+    excerpt: '总结 Go 并发编程中的常见模式和最佳实践，包括 Goroutine 池、Channel 编排和 context 的使用。',
+    tags: ['Go', '并发编程', 'Goroutine'],
+    content: `<p>Go 语言的并发模型是其最大的亮点之一。Goroutine 和 Channel 的组合提供了一种优雅的并发编程方式。本文分享我在实际项目中使用 Go 并发编程的一些经验。</p>
+<h3>Goroutine 生命周期管理</h3>
+<p>最常见的错误是让 Goroutine 变成"孤儿"。每个 Goroutine 都应该有明确的退出机制：</p>
+<pre><code>func worker(ctx context.Context, tasks &lt;-chan Task) {
+    for {
+        select {
+        case &lt;-ctx.Done():
+            return  // 优雅退出
+        case task, ok := &lt;-tasks:
+            if !ok {
+                return  // channel 已关闭
+            }
+            process(task)
+        }
+    }
+}</code></pre>
+<h3>并发控制模式</h3>
+<p>在实际项目中，无限创建 Goroutine 会导致资源耗尽。我常用的并发控制模式包括：</p>
+<p><strong>信号量模式</strong> — 使用 buffered channel 作为信号量，限制并发数量</p>
+<p><strong>Worker Pool 模式</strong> — 预先创建固定数量的 worker，适用于 CPU 密集型任务</p>
+<p><strong>扇出扇入模式</strong> — 将一个大任务分发给多个 Goroutine 并行处理，再将结果汇总</p>
+<p>选择哪种模式取决于任务是 I/O 密集型还是 CPU 密集型，以及对延迟和吞吐量的要求。</p>`
+  },
+  {
+    id: 4,
+    date: '2026-03-10',
+    title: '从零搭建 CI/CD 流水线：速度与质量的最佳实践',
+    excerpt: '分享一套经过验证的 CI/CD 实践方案，涵盖构建缓存、并行化策略和自动化测试的最佳实践。',
+    tags: ['DevOps', 'CI/CD', '自动化'],
+    content: `<p>一套高效的 CI/CD 流水线是现代软件开发的基础设施。经过多个项目的迭代优化，我总结了一套兼顾速度与质量的实践方案。</p>
+<h3>流水线设计原则</h3>
+<p>好的 CI/CD 流水线应该遵循 <strong>快速失败</strong> 原则——把最容易失败的检查放在最前面。我的流水线通常分为以下几个阶段：</p>
+<p><strong>Lint & Format（最快）</strong> — 代码风格和静态检查，通常在 30 秒内完成</p>
+<p><strong>Type Check</strong> — TypeScript 类型检查，1-2 分钟</p>
+<p><strong>Unit Tests</strong> — 单元测试，并行运行，3-5 分钟</p>
+<p><strong>Integration Tests</strong> — 集成测试，5-10 分钟</p>
+<p><strong>Build & Deploy Preview</strong> — 构建和预览部署，最后阶段</p>
+<h3>构建缓存策略</h3>
+<p>缓存是 CI/CD 提速的关键。在 Docker 场景下，多阶段构建配合 layer cache 可以减少 70% 以上的构建时间。在 Node.js 项目中，合理使用 node_modules 缓存和 Turborepo 的远程缓存可以做到秒级构建。</p>
+<pre><code># Dockerfile 多阶段构建示例
+FROM node:20-alpine AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+FROM node:20-alpine AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN pnpm build</code></pre>`
+  }
+];
+
+// ===== Render Blog Cards =====
+const blogGrid = document.getElementById('blogGrid');
+blogPosts.forEach(post => {
+  const card = document.createElement('div');
+  card.className = 'blog-card fade-in';
+  card.innerHTML = `
+    <div class="blog-card-date">${post.date}</div>
+    <h3>${post.title}</h3>
+    <p>${post.excerpt}</p>
+    <div class="blog-card-tags">
+      ${post.tags.map(t => `<span>${t}</span>`).join('')}
+    </div>
+    <div class="blog-card-arrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </div>
+  `;
+  card.addEventListener('click', () => openBlogDetail(post));
+  blogGrid.appendChild(card);
+});
+
+// ===== Blog Detail Modal =====
+const modalOverlay = document.getElementById('modalOverlay');
+const modalBody = document.getElementById('modalBody');
+const modalClose = document.getElementById('modalClose');
+
+function openBlogDetail(post) {
+  modalBody.innerHTML = `
+    <div class="blog-meta">${post.date}</div>
+    <h2>${post.title}</h2>
+    <div class="blog-content">${post.content}</div>
+  `;
+  modalOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modalOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ===== Blog Card Hover Effect =====
+document.querySelectorAll('.blog-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mouse-x', `${x}%`);
+    card.style.setProperty('--mouse-y', `${y}%`);
+  });
+});
+
+// ===== Mobile Nav Toggle =====
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.querySelector('.nav-links');
+
+navToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+});
+
+// Close mobile nav on link click
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+  });
+});
+
+// ===== Scroll Animations =====
+const observerOptions = {
+  root: null,
+  rootMargin: '0px 0px -60px 0px',
+  threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+// Observe all fade-in elements (including dynamically added blog cards)
+setTimeout(() => {
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+}, 100);
+
+// ===== Nav Scroll Background =====
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.nav');
+  if (window.scrollY > 10) {
+    nav.style.background = 'rgba(255, 255, 255, 0.85)';
+  } else {
+    nav.style.background = 'rgba(255, 255, 255, 0.72)';
+  }
+});
+</script>
+
+</body>
+</html>

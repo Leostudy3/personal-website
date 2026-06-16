@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNS 故障排查手册 · Leo Li</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; color: #1d1d1f; background: #ffffff; line-height: 1.6; }
+.container { max-width: 780px; margin: 0 auto; padding: 80px 24px 60px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: #0071e3; text-decoration: none; margin-bottom: 32px; transition: opacity 0.2s; }
+.back-link:hover { opacity: 0.7; }
+h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -0.03em; margin-bottom: 12px; }
+.meta { font-size: 14px; color: #86868b; margin-bottom: 40px; }
+h2 { font-size: 22px; font-weight: 600; margin: 48px 0 16px; color: #1d1d1f; }
+h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: #1d1d1f; }
+p { font-size: 17px; color: #424245; line-height: 1.8; margin-bottom: 16px; }
+strong { color: #1d1d1f; }
+pre { background: #f5f5f7; border-radius: 12px; padding: 20px; overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 20px 0; font-family: "SF Mono", Monaco, "Cascadia Code", monospace; }
+code { font-family: "SF Mono", Monaco, monospace; font-size: 14px; background: #f5f5f7; padding: 2px 6px; border-radius: 4px; }
+pre code { background: none; padding: 0; }
+ul, ol { margin: 16px 0; padding-left: 24px; }
+li { font-size: 17px; color: #424245; line-height: 1.8; margin-bottom: 8px; }
+.note { background: rgba(0,113,227,0.06); border-left: 3px solid #0071e3; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0; }
+.note p { margin: 0; font-size: 15px; color: #1d1d1f; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+.tags span { font-size: 12px; font-weight: 500; color: #0071e3; background: rgba(0,113,227,0.06); padding: 4px 12px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html#projects" class="back-link">&larr; 返回首页</a>
+  <h1>DNS 故障排查手册</h1>
+  <div class="tags"><span>dig</span><span>tcpdump</span><span>DNS Flag Day</span><span>QNAME Minimisation</span></div>
+  <p class="meta">常见 DNS 问题排查思路，涵盖递归超时、NXDOMAIN 误报、DNSSEC 验证失败、缓存污染等场景。</p>
+
+  <h2>必备工具</h2>
+  <ul>
+    <li><strong>dig</strong> — DNS 查询调试的核心工具，支持 +trace、+dnssec、+tcp 等参数</li>
+    <li><strong>tcpdump</strong> — 网络抓包分析，排查 DNS 包是否被丢弃或篡改</li>
+    <li><strong>dnsviz.net</strong> — 在线 DNSSEC 验证链路可视化工具</li>
+    <li><strong>dnsflagday.net</strong> — 检查 DNS 服务器是否符合 DNS Flag Day 要求</li>
+  </ul>
+
+  <h2>场景一：递归解析超时</h2>
+  <h3>现象</h3>
+  <p>部分域名解析耗时过长或直接返回 SERVFAIL。</p>
+  <h3>排查步骤</h3>
+  <ol>
+    <li>使用 <code>dig +trace</code> 跟踪完整解析链路，定位卡在哪个环节</li>
+    <li>使用 <code>tcpdump</code> 抓包检查 UDP 包是否被丢弃</li>
+    <li>检查 EDNS Buffer Size 配置，尝试切换到 TCP 模式</li>
+  </ol>
+  <pre><code># 跟踪解析链路
+dig +trace example.com
+
+# 抓取 DNS 流量
+tcpdump -i eth0 -nn port 53 -w dns.pcap
+
+# 强制使用 TCP
+dig +tcp example.com</code></pre>
+
+  <h2>场景二：NXDOMAIN 误报</h2>
+  <h3>现象</h3>
+  <p>域名明明存在，但解析返回 NXDOMAIN。</p>
+  <h3>排查步骤</h3>
+  <ol>
+    <li>确认权威服务器上的 Zone 文件是否正确</li>
+    <li>检查是否有错误的 Forward 或 Stub Zone 配置覆盖了正常的递归解析</li>
+    <li>查询不同公共 DNS（Google 8.8.8.8 / Cloudflare 1.1.1.1）对比结果</li>
+    <li>检查 QNAME Minimisation 是否导致了误报</li>
+  </ol>
+  <pre><code># 对比不同 DNS 结果
+dig @8.8.8.8 example.com
+dig @1.1.1.1 example.com
+dig @your-resolver example.com</code></pre>
+
+  <h2>场景三：DNSSEC 验证失败</h2>
+  <h3>现象</h3>
+  <p>启用 DNSSEC 后，部分域名返回 SERVFAIL。</p>
+  <h3>排查步骤</h3>
+  <ol>
+    <li>使用 <code>dig +dnssec</code> 检查签名链是否完整</li>
+    <li>确认 DS 记录是否已在父区正确注册</li>
+    <li>检查签名是否在有效期内（RRSIG 的 inception/expiration）</li>
+    <li>验证 DNS 服务器时间是否准确（NTP 同步）</li>
+  </ol>
+  <pre><code># DNSSEC 验证
+dig +dnssec +multi example.com A
+
+# 查看签名有效期
+dig +dnssec +multi example.com SOA</code></pre>
+
+  <h2>场景四：缓存污染</h2>
+  <h3>现象</h3>
+  <p>部分用户被解析到错误的 IP 地址，问题间歇性出现。</p>
+  <h3>排查步骤</h3>
+  <ol>
+    <li>在递归服务器上执行 <code>rndc dumpdb</code> 导出缓存</li>
+    <li>检查目标域名的缓存记录是否正确</li>
+    <li>排查是否有错误的 Forward 配置指向不可信上游</li>
+    <li>清空缓存后观察是否恢复正常</li>
+  </ol>
+  <pre><code># 导出缓存
+rndc dumpdb -all
+
+# 清空缓存
+rndc flush
+
+# 清空特定域名缓存
+rndc flushname example.com</code></pre>
+
+  <h2>场景五：DNS Flag Day 合规</h2>
+  <p>如果你的 DNS 服务不兼容 DNS Flag Day 要求，可能在全球范围内出现解析失败。关键检查点：</p>
+  <ul>
+    <li>能否正确处理 EDNS 查询（不返回 FORMERR）</li>
+    <li>TCP 53 端口是否开放（EDNS 大包 fallback 需要）</li>
+    <li>EDNS Buffer Size 是否合理（建议 1232 字节）</li>
+  </ul>
+
+  <div class="note"><p><strong>快速检查：</strong>访问 <a href="https://dnsflagday.net" style="color: #0071e3;">dnsflagday.net</a> 输入你的域名，即可获得合规性报告。访问 <a href="https://dnsviz.net" style="color: #0071e3;">dnsviz.net</a> 可查看完整的 DNSSEC 验证链路。</p></div>
+</div>
+</body>
+</html>

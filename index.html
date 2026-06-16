@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leo Li · 生活与技术</title>
+<title>Leo‘s Website</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
 /* ===== Reset & Base ===== */
 *, *::before, *::after {
@@ -13,7 +14,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -105,7 +105,6 @@ img {
 
 /* ===== Hero ===== */
 .hero {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,8 +113,45 @@ img {
   position: relative;
 }
 
+.hero-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60vh;
+  background: url('hero-banner.png') center/cover no-repeat;
+  z-index: 0;
+}
+
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 70%, #ffffff 100%);
+}
+
 .hero-content {
   max-width: 720px;
+  position: relative;
+  z-index: 2;
+  padding-top: 40vh;
+}
+
+.hero h1 {
+  color: #1d1d1f;
+}
+
+.hero h2 {
+  color: #6e6e73;
+}
+
+.hero-tags span {
+  color: #0071e3;
+  background: rgba(0,113,227,0.06);
+}
+
+.scroll-indicator {
+  color: rgba(255,255,255,0.5);
 }
 
 .hero-avatar {
@@ -166,26 +202,6 @@ img {
   padding: 6px 16px;
   border-radius: 20px;
   letter-spacing: -0.01em;
-}
-
-/* Scroll indicator */
-.scroll-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0.4;
-  animation: float 2s ease-in-out infinite;
-}
-
-.scroll-indicator svg {
-  width: 24px;
-  height: 24px;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(8px); }
 }
 
 /* ===== Sections Common ===== */
@@ -777,6 +793,14 @@ img {
     font-size: 48px;
   }
 
+  .hero-banner {
+    height: 50vh;
+  }
+
+  .hero-content {
+    padding-top: 35vh;
+  }
+
   .section {
     padding: 80px 24px;
   }
@@ -802,6 +826,14 @@ img {
     font-size: 36px;
   }
 
+  .hero-banner {
+    height: 45vh;
+  }
+
+  .hero-content {
+    padding-top: 28vh;
+  }
+
   .modal-body {
     padding: 24px;
   }
@@ -817,14 +849,14 @@ img {
 <!-- Navigation -->
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#" class="nav-logo">Leo Li</a>
+    <a href="#" class="nav-logo">Leo's</a>
     <button class="nav-toggle" aria-label="Toggle navigation">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links">
       <li><a href="#blog">博客</a></li>
-      <li><a href="#skills">兴趣</a></li>
-      <li><a href="#experience">经验</a></li>
+      <li><a href="#skills">专业</a></li>
+      <li><a href="#experience">经历</a></li>
       <li><a href="#projects">项目</a></li>
       <li><a href="#about">关于</a></li>
     </ul>
@@ -833,21 +865,16 @@ img {
 
 <!-- Hero -->
 <section class="hero" id="home">
+  <div class="hero-banner"></div>
   <div class="hero-content">
-    <div class="hero-avatar fade-in">👋</div>
-    <h1 class="fade-in">你好，我是 Leo</h1>
-    <h2 class="fade-in">保持好奇，记录生活。<br>这里有些技术笔记，也有些旅途见闻。</h2>
+    <h1 class="fade-in">Leo's Blog</h1>
+    <h2 class="fade-in">保持好奇心，记录生活。<br>这里有些技术笔记，也有些路上的风景。</h2>
     <div class="hero-tags fade-in">
       <span>技术</span>
+      <span>阅读</span>
       <span>旅行</span>
       <span>摄影</span>
-      <span>阅读</span>
     </div>
-  </div>
-  <div class="scroll-indicator">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M12 5v14M5 12l7 7 7-7"/>
-    </svg>
   </div>
 </section>
 
@@ -856,7 +883,7 @@ img {
   <div class="section-inner">
     <div class="section-label fade-in">Blog</div>
     <h2 class="section-title fade-in">技术博客</h2>
-    <p class="section-desc fade-in">技术思考与生活随笔，想到什么就写什么。</p>
+    <p class="section-desc fade-in">技术笔记与生活随笔，想到什么写什么。</p>
     <div class="blog-grid" id="blogGrid">
       <!-- Injected by JS -->
     </div>
@@ -867,13 +894,23 @@ img {
 <section class="section" id="skills">
   <div class="section-inner">
     <div class="section-label fade-in">Interest</div>
-    <h2 class="section-title fade-in">兴趣方向</h2>
-    <p class="section-desc fade-in">工作之余，这些是我花时间最多的领域。</p>
+    <h2 class="section-title fade-in">兴趣 & 方向</h2>
+    <p class="section-desc fade-in">工作中深挖的领域，生活里热爱的事物。</p>
     <div class="skills-grid">
       <div class="skill-item fade-in">
-        <div class="skill-icon">💻</div>
-        <h4>软件开发</h4>
-        <p>喜欢用代码解决问题，关注前端和后端技术，偶尔写点技术博客记录心得</p>
+        <div class="skill-icon">🌐</div>
+        <h4>DNS 协议</h4>
+        <p>深入理解 DNS 协议栈，递归解析、权威服务、DNSSEC 安全，日常用 dig 比用浏览器还熟练</p>
+      </div>
+      <div class="skill-item fade-in">
+        <div class="skill-icon">🔐</div>
+        <h4>DNSSEC 安全</h4>
+        <p>KSK/ZSK 密钥管理、DS 记录配置、签名验证链路，让域名解析更可信</p>
+      </div>
+      <div class="skill-item fade-in">
+        <div class="skill-icon">🔧</div>
+        <h4>Linux & 运维</h4>
+        <p>BIND/Unbound/PowerDNS 配置管理，系统调优，Shell 脚本自动化</p>
       </div>
       <div class="skill-item fade-in">
         <div class="skill-icon">✈️</div>
@@ -898,29 +935,36 @@ img {
 <section class="section experience-section" id="experience">
   <div class="section-inner">
     <div class="section-label fade-in">Experience</div>
-    <h2 class="section-title fade-in">技术经验</h2>
-    <p class="section-desc fade-in">从代码到架构，这些年积累的实战经验。</p>
+    <h2 class="section-title fade-in">探索 & 成长</h2>
+    <p class="section-desc fade-in">技术与生活的交汇点。</p>
     <div class="timeline">
       <div class="timeline-item fade-in">
         <div class="timeline-dot"></div>
-        <div class="timeline-date">2024 - 至今</div>
-        <h3>大规模微服务架构演进</h3>
-        <div class="timeline-role">架构师视角</div>
-        <p>主导团队从单体应用向微服务架构的迁移，涉及服务拆分策略、API 网关设计、分布式事务处理以及可观测性体系建设。通过渐进式重构降低风险，实现零停机迁移。</p>
+        <div class="timeline-date">2025 - 至今</div>
+        <h3>企业 DNS 架构设计与部署</h3>
+        <div class="timeline-role">售前 & 方案</div>
+        <p>参与多个大型企业智能 DNS 解析方案的设计与部署，涵盖内外网域名统一管理、高可用架构规划和网络接入方案。积累了丰富的客户演示和技术交流经验。</p>
       </div>
       <div class="timeline-item fade-in">
         <div class="timeline-dot"></div>
-        <div class="timeline-date">2023 - 2024</div>
-        <h3>前端性能优化体系</h3>
-        <div class="timeline-role">工程实践</div>
-        <p>建立前端性能监控与优化体系，包括 Core Web Vitals 指标体系搭建、SSR/SSG 渲染策略选择、Bundle 体积优化（从 2.8MB 降至 460KB）、图片与字体加载策略优化。</p>
+        <div class="timeline-date">2025 - 至今</div>
+        <h3>DNSSEC 安全方案实践</h3>
+        <div class="timeline-role">安全 & 研究</div>
+        <p>深入研究 DNSSEC 协议与部署方案，推动客户启用 DNSSEC 签名验证。涵盖密钥轮转策略、DS 记录管理和安全合规评测。</p>
       </div>
       <div class="timeline-item fade-in">
         <div class="timeline-dot"></div>
-        <div class="timeline-date">2022 - 2023</div>
-        <h3>开源项目贡献</h3>
-        <div class="timeline-role">社区参与</div>
-        <p>持续参与多个开源项目的贡献与维护，包括提交 PR、文档改进、Issue 解答。在开源社区中学习到了代码协作的最佳实践和高质量代码的标准。</p>
+        <div class="timeline-date">2024 - 2025</div>
+        <h3>DNS 运维体系建设</h3>
+        <div class="timeline-role">运维 & 自动化</div>
+        <p>建立 DNS 监控告警体系，处理各类解析故障——递归超时、缓存污染、DNSSEC 验证失败。通过自动化和脚本提升运维效率。</p>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">每年</div>
+        <h3>旅行 & 摄影</h3>
+        <div class="timeline-role">生活</div>
+        <p>每年安排几次旅行，带着相机探索新的城市和风景。京都的古寺、曼谷的夜市、大理的洱海——每段旅途都是生活的养分。</p>
       </div>
     </div>
   </div>
@@ -930,39 +974,39 @@ img {
 <section class="section" id="projects">
   <div class="section-inner">
     <div class="section-label fade-in">Projects</div>
-    <h2 class="section-title fade-in">精选项目</h2>
-    <p class="section-desc fade-in">一些有意思的技术探索。</p>
+    <h2 class="section-title fade-in">案例分享</h2>
+    <p class="section-desc fade-in">一些典型的 DNS 问题排查和技术方案。</p>
     <div class="projects-grid">
-      <div class="project-card fade-in">
-        <div class="project-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🚀</div>
+      <a href="case-dnssec.html" class="project-card fade-in">
+        <div class="project-image" style="background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);">🔐</div>
         <div class="project-info">
-          <h3>分布式任务调度平台</h3>
-          <p>基于 Go + Redis 的轻量级分布式任务调度系统，支持定时任务、工作流编排和故障自动恢复。</p>
+          <h3>DNSSEC 签名部署方案</h3>
+          <p>完整的 DNSSEC 签名启用流程，包括 KSK/ZSK 密钥生成、DS 记录注册、签名策略配置和验证链路测试。</p>
           <div class="project-tech">
-            <span>Go</span><span>Redis</span><span>gRPC</span><span>Kubernetes</span>
+            <span>DNSSEC</span><span>BIND</span><span>KSK/ZSK</span><span>DS Record</span>
           </div>
         </div>
-      </div>
-      <div class="project-card fade-in">
-        <div class="project-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎨</div>
+      </a>
+      <a href="case-anycast.html" class="project-card fade-in">
+        <div class="project-image" style="background: linear-gradient(135deg, #34a853 0%, #0f9d58 100%);">📡</div>
         <div class="project-info">
-          <h3>设计系统组件库</h3>
-          <p>企业级 React 组件库，基于 Radix UI 构建，支持主题定制、无障碍访问和完整的 TypeScript 类型推导。</p>
+          <h3>DNS Anycast 架构设计</h3>
+          <p>多节点 Anycast DNS 部署方案，结合 BGP 路由策略实现就近解析、负载分担和自动故障切换。</p>
           <div class="project-tech">
-            <span>React</span><span>TypeScript</span><span>Storybook</span><span>CSS-in-JS</span>
+            <span>Anycast</span><span>BGP</span><span>BIND</span><span>高可用</span>
           </div>
         </div>
-      </div>
-      <div class="project-card fade-in">
-        <div class="project-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">📊</div>
+      </a>
+      <a href="case-troubleshoot.html" class="project-card fade-in">
+        <div class="project-image" style="background: linear-gradient(135deg, #ea4335 0%, #fbbc04 100%);">🔍</div>
         <div class="project-info">
-          <h3>实时数据可视化平台</h3>
-          <p>基于 WebSocket 的实时数据监控面板，支持自定义仪表盘配置和多种图表类型的动态渲染。</p>
+          <h3>DNS 故障排查手册</h3>
+          <p>整理常见 DNS 问题排查思路，涵盖递归超时、NXDOMAIN 误报、DNSSEC 验证失败、缓存污染等典型场景。</p>
           <div class="project-tech">
-            <span>Vue 3</span><span>D3.js</span><span>WebSocket</span><span>Canvas</span>
+            <span>dig</span><span>tcpdump</span><span>DNS Flag Day</span><span>QNAME Minimisation</span>
           </div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </section>
@@ -974,26 +1018,26 @@ img {
     <h2 class="section-title fade-in">关于我</h2>
     <div class="about-grid fade-in">
       <div class="about-text">
-        <p>我是一名软件开发者，对技术保持热情，也热爱生活中的美好事物。这个网站是我记录和分享的地方——技术笔记、旅行见闻、或者随便什么想写的东西。</p>
-        <p>在工作之余，我喜欢旅行、摄影和阅读。我觉得代码和相机都是工具，它们的共同点是帮助我们理解和表达这个世界。</p>
-        <p>如果你对我的文字感兴趣，或者想聊聊技术和旅行，欢迎随时联系我。</p>
+        <p>我是一名 DNS 工程师，日常工作是让域名解析更快、更稳定、更安全。从权威 DNS 到递归解析，从 DNSSEC 到高可用架构，每天都在和域名系统打交道。</p>
+        <p>工作之外，我喜欢旅行和摄影。带着相机走陌生的城市，记录光影和故事。技术是我的职业，但生活远不止于此。</p>
+        <p>这个网站是我记录和分享的地方——技术笔记、旅行见闻、或者随便什么想写的东西。欢迎交流。</p>
       </div>
       <div class="about-stats">
         <div class="stat-item">
-          <div class="stat-number">5+</div>
-          <div class="stat-label">年开发经验</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">30+</div>
-          <div class="stat-label">技术文章</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">10+</div>
-          <div class="stat-label">开源项目</div>
+          <div class="stat-number">4+</div>
+          <div class="stat-label">DNS 项目经验</div>
         </div>
         <div class="stat-item">
           <div class="stat-number">3+</div>
-          <div class="stat-label">技术分享</div>
+          <div class="stat-label">企业客户</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100+</div>
+          <div class="stat-label">DNS 故障排查</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">DNSSEC</div>
+          <div class="stat-label">安全专项</div>
         </div>
       </div>
     </div>
@@ -1005,9 +1049,8 @@ img {
   <div class="footer-inner">
     <p class="footer-copy">&copy; 2026 Leo Li. All rights reserved.</p>
     <ul class="footer-links">
-      <li><a href="#">GitHub</a></li>
-      <li><a href="#">Twitter</a></li>
-      <li><a href="#">Email</a></li>
+      <li><a href="https://github.com/Leostudy3" target="_blank">GitHub</a></li>
+      <li><a href="mailto:leostudy3@gmail.com">Email</a></li>
     </ul>
   </div>
 </footer>
@@ -1025,7 +1068,24 @@ img {
 const blogPosts = [
   {
     id: 1,
-    date: '2026-06-01',
+    date: '2026-06-12',
+    title: 'DNSSEC 业务割接实战记录',
+    excerpt: '记录一次 DNSSEC 签名启用的完整割接过程，包括前期准备、配置步骤、验证方法和回退方案。',
+    tags: ['DNS', 'DNSSEC', '业务割接'],
+    content: `<p>最近负责了一次 DNSSEC 签名启用的割接。整个过程涉及多个环节，这里记录一下经验和踩坑。</p>
+<h3>割接前准备</h3>
+<p>确认各个系统对 DNSSEC 的支持情况。先在测试环境完整跑了一遍流程——从密钥生成、Zone 签名、DS 记录注册到最终验证。制定了详细的回退方案，包括签名回滚和 DS 记录删除的时间窗口。</p>
+<h3>执行步骤</h3>
+<p><strong>1. 生成 KSK 和 ZSK</strong> — KSK 使用 ECDSA P-256 算法，有效期一年；ZSK 有效期一个月，定期轮转。</p>
+<p><strong>2. 配置签名策略</strong> — 设置 NSEC3 参数、签名有效期和 Jitter 时间。</p>
+<p><strong>3. 注册 DS 记录</strong> — 在父区提交 DS 记录，等待 TTL 过期后验证。</p>
+<p><strong>4. 开启验证</strong> — 逐步开启递归端的 DNSSEC 验证，监控解析成功率。</p>
+<h3>经验总结</h3>
+<p>TTL 管理是 DNSSEC 的重中之重——DS 记录的 TTL 直接决定了回退的速度。密钥轮转必须提前规划，建议 KSK 轮转至少提前一个月做预发布。</p>`
+  },
+  {
+    id: 2,
+    date: '2026-06-08',
     title: '探索京都：古都漫步日记',
     excerpt: '在京都待了一周，走遍了岚山、清水寺、伏见稻荷。分享一些喜欢的照片和路线。',
     tags: ['旅行', '摄影', '京都'],
@@ -1035,121 +1095,67 @@ const blogPosts = [
 <p>岚山的小火车也很有意思，沿着保津川慢慢开，两边的山景很漂亮。秋天来应该更美。</p>
 <h3>Day 3-4：寺庙巡礼</h3>
 <p>清水寺、金阁寺、龙安寺——每个都有自己的气质。龙安寺的枯山水石庭让我坐了很久，15块石头无论从哪个角度看都不能同时看到全部，挺有意思的设计。</p>
-<p>伏见稻荷大社的千本�的鸟居比想象中长很多，一路走到山顶大概花了2小时。</p>
+<p>伏见稻荷大社的千本鸟居比想象中长很多，一路走到山顶大概花了2小时。</p>
 <h3>一些实用建议</h3>
 <p>交通买张 ICOCA 卡很方便。住宿推荐住在祇园附近，晚上散步很有氛围。吃的话，锦市场可以逛一下，但更推荐去小巷子里找当地人吃的小店。</p>`
   },
   {
-    id: 2,
-    date: '2026-05-15',
-    title: '构建可扩展的前端架构：从组件到微前端',
-    excerpt: '探讨如何从组件设计出发，逐步构建可扩展的前端架构，涵盖模块化、状态管理和微前端的实践思考。',
-    tags: ['前端架构', '微前端', '组件设计'],
-    content: `<p>在现代前端开发中，随着应用规模的增长，如何保持代码的可维护性和可扩展性成为了核心挑战。本文从实际项目经验出发，分享我在构建可扩展前端架构方面的一些思考。</p>
-<h3>组件设计的三个层次</h3>
-<p>一个好的前端架构，始于良好的组件设计。经过多个项目的实践，我将组件分为三个层次：</p>
-<p><strong>原子组件（Atoms）</strong> — 最基础的可复用 UI 单元，如 Button、Input、Tag。它们不包含业务逻辑，只负责渲染和基本的交互反馈。</p>
-<p><strong>组合组件（Molecules）</strong> — 由原子组件组合而成的功能模块，如 SearchBar、UserCard。它们封装了特定的交互逻辑，但仍然是业务无关的。</p>
-<p><strong>业务组件（Organisms）</strong> — 与具体业务场景绑定的组件，如 OrderList、Dashboard。它们负责数据的获取、处理和业务逻辑的编排。</p>
-<h3>状态管理的进化路径</h3>
-<p>在状态管理方面，我倾向于遵循"渐进增强"的原则：</p>
-<pre><code>// 优先级 1：组件内部状态 — 使用 useState/ref
-const [isOpen, setIsOpen] = useState(false)
-
-// 优先级 2：跨组件共享 — 使用 Context 或状态管理库
-const { user, login } = useAuth()
-
-// 优先级 3：服务端状态 — 使用 React Query/SWR
-const { data } = useQuery(['posts'], fetchPosts)</code></pre>
-<p>关键原则是：不要让状态过早地离开它所属的组件。只有在确实需要跨组件共享时，才提升状态。</p>
-<h3>微前端的取舍</h3>
-<p>微前端不是银弹。在决定是否采用微前端方案时，我会问三个问题：团队是否独立？技术栈是否需要异构？部署是否需要独立？如果答案都是肯定的，微前端才是一个合理的选择。</p>
-<p>在实践层面，我更推荐 Module Federation 而非 iframe 方案，因为它在运行时性能、共享依赖和开发体验上都有明显优势。</p>`
-  },
-  {
-    id: 2,
-    date: '2026-05-15',
-    title: 'TypeScript 高级类型实战：从入门到类型体操',
-    excerpt: '深入 TypeScript 类型系统，通过实际案例展示条件类型、模板字面量类型和 infer 关键字的强大用法。',
-    tags: ['TypeScript', '类型系统', '进阶'],
-    content: `<p>TypeScript 的类型系统是图灵完备的，这意味着你可以在类型层面进行编程。本文通过几个实际案例，展示 TypeScript 高级类型的威力。</p>
-<h3>条件类型与 infer</h3>
-<p>条件类型是 TypeScript 类型体操的核心工具。配合 infer 关键字，我们可以实现强大的类型推断：</p>
-<pre><code>// 提取 Promise 的内部类型
-type Unwrap&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T
-
-// 提取函数返回类型（内置 ReturnType 的实现）
-type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never
-
-// 提取数组元素类型
-type ElementOf&lt;T&gt; = T extends (infer E)[] ? E : never</code></pre>
-<h3>模板字面量类型</h3>
-<p>TypeScript 4.1 引入的模板字面量类型让我们可以在类型层面操作字符串：</p>
-<pre><code>// 为对象的所有 key 添加前缀
-type Prefixed&lt;T, P extends string&gt; = {
-  [K in keyof T as \`\${P}\${string & K}\`]: T[K]
-}
-
-// 使用示例
-interface User { id: number; name: string }
-type PrefixedUser = Prefixed&lt;User, 'user_'&gt;
-// { user_id: number; user_name: string }</code></pre>
-<p>这些技巧在实际项目中非常实用，特别是在构建类型安全的 API 客户端和表单库时。</p>`
-  },
-  {
     id: 3,
-    date: '2026-04-20',
-    title: 'Go 并发编程实践：从 Goroutine 到 Channel 设计模式',
-    excerpt: '总结 Go 并发编程中的常见模式和最佳实践，包括 Goroutine 池、Channel 编排和 context 的使用。',
-    tags: ['Go', '并发编程', 'Goroutine'],
-    content: `<p>Go 语言的并发模型是其最大的亮点之一。Goroutine 和 Channel 的组合提供了一种优雅的并发编程方式。本文分享我在实际项目中使用 Go 并发编程的一些经验。</p>
-<h3>Goroutine 生命周期管理</h3>
-<p>最常见的错误是让 Goroutine 变成"孤儿"。每个 Goroutine 都应该有明确的退出机制：</p>
-<pre><code>func worker(ctx context.Context, tasks &lt;-chan Task) {
-    for {
-        select {
-        case &lt;-ctx.Done():
-            return  // 优雅退出
-        case task, ok := &lt;-tasks:
-            if !ok {
-                return  // channel 已关闭
-            }
-            process(task)
-        }
-    }
-}</code></pre>
-<h3>并发控制模式</h3>
-<p>在实际项目中，无限创建 Goroutine 会导致资源耗尽。我常用的并发控制模式包括：</p>
-<p><strong>信号量模式</strong> — 使用 buffered channel 作为信号量，限制并发数量</p>
-<p><strong>Worker Pool 模式</strong> — 预先创建固定数量的 worker，适用于 CPU 密集型任务</p>
-<p><strong>扇出扇入模式</strong> — 将一个大任务分发给多个 Goroutine 并行处理，再将结果汇总</p>
-<p>选择哪种模式取决于任务是 I/O 密集型还是 CPU 密集型，以及对延迟和吞吐量的要求。</p>`
+    date: '2026-06-01',
+    title: 'DNS 递归解析超时问题排查',
+    excerpt: '分享一次典型的 DNS 递归解析超时排查过程，从 dig 到 tcpdump，逐步定位问题根因。',
+    tags: ['DNS', '故障排查', '递归解析'],
+    content: `<p>某天客户反馈业务域名偶尔出现解析超时，现象是间歇性的，不好复现。分享当时的排查思路。</p>
+<h3>第一轮：dig 初步定位</h3>
+<p>先用 dig +trace 跟踪解析链路，发现递归服务器在查询某个权威 NS 时偶发超时。初步怀疑是网络链路问题。</p>
+<pre><code>dig @8.8.8.8 +trace +all example.com</code></pre>
+<h3>第二轮：tcpdump 抓包分析</h3>
+<p>在递归服务器侧抓包后发现，权威服务器对某些 UDP 请求不响应——大概率是 UDP 包被中间防火墙丢弃了。切换到 TCP 模式后问题消失。</p>
+<pre><code>tcpdump -i eth0 -nn port 53 -w dns.pcap</code></pre>
+<h3>根因和方案</h3>
+<p>防火墙对大于 512 字节的 UDP DNS 包做了限制。解决方案：调整 EDNS Buffer Size，同时在递归端启用 TCP fallback。</p>`
   },
   {
     id: 4,
-    date: '2026-03-10',
-    title: '从零搭建 CI/CD 流水线：速度与质量的最佳实践',
-    excerpt: '分享一套经过验证的 CI/CD 实践方案，涵盖构建缓存、并行化策略和自动化测试的最佳实践。',
-    tags: ['DevOps', 'CI/CD', '自动化'],
-    content: `<p>一套高效的 CI/CD 流水线是现代软件开发的基础设施。经过多个项目的迭代优化，我总结了一套兼顾速度与质量的实践方案。</p>
-<h3>流水线设计原则</h3>
-<p>好的 CI/CD 流水线应该遵循 <strong>快速失败</strong> 原则——把最容易失败的检查放在最前面。我的流水线通常分为以下几个阶段：</p>
-<p><strong>Lint & Format（最快）</strong> — 代码风格和静态检查，通常在 30 秒内完成</p>
-<p><strong>Type Check</strong> — TypeScript 类型检查，1-2 分钟</p>
-<p><strong>Unit Tests</strong> — 单元测试，并行运行，3-5 分钟</p>
-<p><strong>Integration Tests</strong> — 集成测试，5-10 分钟</p>
-<p><strong>Build & Deploy Preview</strong> — 构建和预览部署，最后阶段</p>
-<h3>构建缓存策略</h3>
-<p>缓存是 CI/CD 提速的关键。在 Docker 场景下，多阶段构建配合 layer cache 可以减少 70% 以上的构建时间。在 Node.js 项目中，合理使用 node_modules 缓存和 Turborepo 的远程缓存可以做到秒级构建。</p>
-<pre><code># Dockerfile 多阶段构建示例
-FROM node:20-alpine AS deps
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-FROM node:20-alpine AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN pnpm build</code></pre>`
+    date: '2026-06-15',
+    title: '夏日曼谷：街头与烟火气',
+    excerpt: '短暂的三天曼谷之行，从寺庙到夜市，从湄南河到唐人街。一座不需要攻略的城市。',
+    tags: ['旅行', '曼谷', '美食'],
+    content: `<p>临时起意的曼谷之旅，三天两夜，够紧凑也够精彩。</p>
+<h3>大皇宫与卧佛寺</h3>
+<p>大皇宫的金碧辉煌确实震撼，但人太多了。反而旁边的卧佛寺更安静，那尊46米长的卧佛令人印象深刻。下午的光线从窗户斜照进来，很适合拍照。</p>
+<h3>夜市才是灵魂</h3>
+<p>唐人街的街边摊、Ratchada 夜市的小吃、河边的晚餐——在曼谷最不需要的就是精致。芒果糯米饭和冬阴功汤永远不会出错。</p>
+<h3>小贴士</h3>
+<p>Grab 打车很方便，BTS 轻轨覆盖主要区域。11月到次年2月是最佳季节，避开泼水节前后的高温。</p>`
+  },
+  {
+    id: 5,
+    date: '2026-05-20',
+    title: 'BIND 配置最佳实践：从基础到高可用',
+    excerpt: '总结 BIND 在生产环境中的配置要点，包括 View 视图、访问控制、日志和监控。',
+    tags: ['BIND', 'DNS', '配置管理'],
+    content: `<p>BIND 是最广泛使用的 DNS 软件，但默认配置远不能满足生产环境需求。这里总结一些关键的配置优化点。</p>
+<h3>View 视图配置</h3>
+<p>通过 View 可以实现基于源 IP 的智能解析，不同网段的客户端返回不同的解析结果。这在 Anycast 场景下非常实用。</p>
+<h3>访问控制</h3>
+<p>严格限制递归查询的来源 IP、Zone 传输的允许范围、以及动态更新的权限。这些都是 DNS 安全的基础。</p>
+<h3>日志与监控</h3>
+<p>启用 query log 用于审计和排错，但要配置合理的日志轮转策略避免磁盘打满。建议配合 Prometheus + bind_exporter 做实时监控。</p>`
+  },
+  {
+    id: 6,
+    date: '2026-05-10',
+    title: 'DNS Flag Day 与 EDNS 兼容性',
+    excerpt: 'DNS Flag Day 对 DNS 软件的要求和影响，如何检查你的 DNS 服务是否合规。',
+    tags: ['DNS', 'EDNS', 'DNS Flag Day'],
+    content: `<p>DNS Flag Day 是 DNS 社区发起的一项倡议，旨在推动 DNS 软件对 EDNS 的正确支持。如果你的 DNS 服务不兼容，可能会导致解析失败。</p>
+<h3>什么是 EDNS</h3>
+<p>EDNS (Extension Mechanisms for DNS) 是 DNS 协议的扩展机制，允许 DNS 消息超过 512 字节的限制，支持 DNSSEC、Client Subnet 等扩展功能。</p>
+<h3>如何检查合规性</h3>
+<p>使用 DNS Flag Day 提供的在线测试工具检查你的权威和递归服务器是否合规。关键检查点：能否正确处理 EDNS 查询、是否正确响应 TCP。</p>
+<pre><code>dig +dnssec +bufsize=1232 @your-server example.com</code></pre>
+<p>如果返回超时或 SERVFAIL，说明 EDNS 配置有问题，需要检查防火墙是否阻断了较大的 UDP 包或 TCP 53 端口。</p>`
   }
 ];
 
@@ -1163,7 +1169,7 @@ blogPosts.forEach(post => {
     <h3>${post.title}</h3>
     <p>${post.excerpt}</p>
     <div class="blog-card-tags">
-      ${post.tags.map(t => `<span>${t}</span>`).join('')}
+      ${post.tags.map(t => '<span>'+t+'</span>').join('')}
     </div>
     <div class="blog-card-arrow">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1209,8 +1215,8 @@ document.querySelectorAll('.blog-card').forEach(card => {
     const rect = card.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    card.style.setProperty('--mouse-x', `${x}%`);
-    card.style.setProperty('--mouse-y', `${y}%`);
+    card.style.setProperty('--mouse-x', x+'%');
+    card.style.setProperty('--mouse-y', y+'%');
   });
 });
 
@@ -1224,7 +1230,15 @@ navToggle.addEventListener('click', () => {
 
 // Close mobile nav on link click
 navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
     navLinks.classList.remove('open');
   });
 });

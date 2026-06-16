@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNSSEC 签名部署方案 · Leo Li</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; color: #1d1d1f; background: #ffffff; line-height: 1.6; }
+.container { max-width: 780px; margin: 0 auto; padding: 80px 24px 60px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: #0071e3; text-decoration: none; margin-bottom: 32px; transition: opacity 0.2s; }
+.back-link:hover { opacity: 0.7; }
+h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -0.03em; margin-bottom: 12px; }
+.meta { font-size: 14px; color: #86868b; margin-bottom: 40px; }
+h2 { font-size: 22px; font-weight: 600; margin: 48px 0 16px; color: #1d1d1f; }
+h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: #1d1d1f; }
+p { font-size: 17px; color: #424245; line-height: 1.8; margin-bottom: 16px; }
+strong { color: #1d1d1f; }
+pre { background: #f5f5f7; border-radius: 12px; padding: 20px; overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 20px 0; font-family: "SF Mono", Monaco, "Cascadia Code", monospace; }
+code { font-family: "SF Mono", Monaco, monospace; font-size: 14px; background: #f5f5f7; padding: 2px 6px; border-radius: 4px; }
+pre code { background: none; padding: 0; }
+ul, ol { margin: 16px 0; padding-left: 24px; }
+li { font-size: 17px; color: #424245; line-height: 1.8; margin-bottom: 8px; }
+.note { background: rgba(0,113,227,0.06); border-left: 3px solid #0071e3; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0; }
+.note p { margin: 0; font-size: 15px; color: #1d1d1f; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+.tags span { font-size: 12px; font-weight: 500; color: #0071e3; background: rgba(0,113,227,0.06); padding: 4px 12px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html#projects" class="back-link">&larr; 返回首页</a>
+  <h1>DNSSEC 签名部署方案</h1>
+  <div class="tags"><span>DNSSEC</span><span>BIND</span><span>KSK/ZSK</span><span>DS Record</span></div>
+  <p class="meta">完整的 DNSSEC 签名启用流程，从密钥生成到验证链路测试。</p>
+
+  <h2>背景</h2>
+  <p>DNSSEC（DNS Security Extensions）通过数字签名机制确保 DNS 响应的完整性和真实性，防止 DNS 缓存投毒和中间人攻击。部署 DNSSEC 涉及密钥管理、Zone 签名和 DS 记录注册三个核心环节。</p>
+
+  <h2>密钥管理架构</h2>
+  <h3>KSK（Key Signing Key）</h3>
+  <p>用于签名 ZSK，仅在密钥轮转时使用。建议使用 ECDSA P-256 或 RSA-SHA256 算法，有效期 1 年。KSK 的 DS 记录需要注册到父区。</p>
+  <h3>ZSK（Zone Signing Key）</h3>
+  <p>用于签名 Zone 中的实际 DNS 记录。建议有效期 1 个月，定期轮转。轮转频率决定了签名的新鲜度。</p>
+
+  <h2>部署步骤</h2>
+  <ol>
+    <li><strong>生成密钥对</strong> — 使用 <code>dnssec-keygen</code> 生成 KSK 和 ZSK</li>
+    <li><strong>配置 BIND</strong> — 在 named.conf 中启用 auto-dnssec 和 inline-signing</li>
+    <li><strong>签名 Zone</strong> — 使用 <code>dnssec-signzone</code> 或 BIND 自动签名</li>
+    <li><strong>导出 DS 记录</strong> — 从 KSK 生成 DS 记录摘要</li>
+    <li><strong>注册 DS 记录</strong> — 在父区提交 DS 记录，等待 TTL 过期</li>
+    <li><strong>验证部署</strong> — 使用 dig +dnssec 和在线工具验证签名链路</li>
+  </ol>
+
+  <h3>生成密钥示例</h3>
+  <pre><code># 生成 KSK
+dnssec-keygen -a ECDSAP256SHA256 -b 256 -n ZONE -f KSK example.com
+
+# 生成 ZSK
+dnssec-keygen -a ECDSAP256SHA256 -b 256 -n ZONE example.com
+
+# 签名 Zone
+dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16) \
+  -N INCREMENT -o example.com -t example.com.db</code></pre>
+
+  <h3>BIND 配置示例</h3>
+  <pre><code>zone "example.com" {
+    type master;
+    file "dynamic/example.com.db";
+    auto-dnssec maintain;
+    inline-signing yes;
+    key-directory "keys/";
+};</code></pre>
+
+  <h3>验证 DNSSEC</h3>
+  <pre><code># 检查签名链
+dig +dnssec +multi example.com A
+
+# 使用在线工具
+# https://dnsviz.net/
+# https://dnssec-analyzer.verisignlabs.com/</code></pre>
+
+  <h2>关键注意事项</h2>
+  <div class="note"><p><strong>TTL 管理：</strong>DS 记录的 TTL 直接影响回退速度。修改 DS 记录后需等待原 TTL 过期，建议操作前先将 TTL 降到 300 秒。</p></div>
+  <p><strong>时间同步：</strong>DNSSEC 签名依赖准确的时间戳，确保 DNS 服务器已配置 NTP 时间同步。</p>
+  <p><strong>密钥轮转：</strong>ZSK 轮转相对简单（预发布→激活→退役），KSK 轮转需提前一个月做预发布，并在父区更新 DS 记录后才可删除旧 KSK。</p>
+  <p><strong>回退方案：</strong>任何 DNSSEC 操作都要准备回退方案——移除 DS 记录 + 重启 named + 清除缓存。</p>
+</div>
+</body>
+</html>

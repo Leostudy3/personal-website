@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNS Anycast 架构设计 · Leo Li</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; color: #1d1d1f; background: #ffffff; line-height: 1.6; }
+.container { max-width: 780px; margin: 0 auto; padding: 80px 24px 60px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: #0071e3; text-decoration: none; margin-bottom: 32px; transition: opacity 0.2s; }
+.back-link:hover { opacity: 0.7; }
+h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -0.03em; margin-bottom: 12px; }
+.meta { font-size: 14px; color: #86868b; margin-bottom: 40px; }
+h2 { font-size: 22px; font-weight: 600; margin: 48px 0 16px; color: #1d1d1f; }
+h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: #1d1d1f; }
+p { font-size: 17px; color: #424245; line-height: 1.8; margin-bottom: 16px; }
+strong { color: #1d1d1f; }
+pre { background: #f5f5f7; border-radius: 12px; padding: 20px; overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 20px 0; font-family: "SF Mono", Monaco, "Cascadia Code", monospace; }
+code { font-family: "SF Mono", Monaco, monospace; font-size: 14px; background: #f5f5f7; padding: 2px 6px; border-radius: 4px; }
+pre code { background: none; padding: 0; }
+ul, ol { margin: 16px 0; padding-left: 24px; }
+li { font-size: 17px; color: #424245; line-height: 1.8; margin-bottom: 8px; }
+.note { background: rgba(0,113,227,0.06); border-left: 3px solid #0071e3; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 24px 0; }
+.note p { margin: 0; font-size: 15px; color: #1d1d1f; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+.tags span { font-size: 12px; font-weight: 500; color: #0071e3; background: rgba(0,113,227,0.06); padding: 4px 12px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html#projects" class="back-link">&larr; 返回首页</a>
+  <h1>DNS Anycast 架构设计</h1>
+  <div class="tags"><span>Anycast</span><span>BGP</span><span>BIND</span><span>高可用</span></div>
+  <p class="meta">多节点 Anycast DNS 部署方案，实现就近解析、负载分担和自动故障切换。</p>
+
+  <h2>什么是 Anycast</h2>
+  <p>Anycast 是一种网络寻址和路由方案，<strong>多个服务器使用相同的 IP 地址</strong>，通过 BGP 路由协议将用户请求导向最近的节点。在 DNS 场景中，Anycast 能显著降低查询延迟、分散流量负载、自动实现故障切换。</p>
+
+  <h2>架构设计</h2>
+  <h3>节点分布</h3>
+  <p>建议至少部署 3 个以上节点，分布在不同的地理位置和网络运营商。典型的节点数量为 4-6 个，可以覆盖主要的地理区域。</p>
+  <p>每个节点运行相同的 BIND 配置，Zone 数据通过 AXFR/IXFR 从隐藏主服务器同步。所有节点对外宣告相同的 DNS 服务 IP。</p>
+
+  <h3>BGP 宣告</h3>
+  <p>每个节点通过 BGP 向所在网络的运营商宣告 DNS 服务 IP。当用户发起 DNS 查询时，BGP 根据最短路径原则将请求路由到最近的节点。</p>
+  <pre><code># 示例 BGP 配置（Quagga/FRR）
+router bgp 65001
+ network 203.0.113.1/32
+ neighbor 192.0.2.1 remote-as 65002</code></pre>
+
+  <h2>优势</h2>
+  <ul>
+    <li><strong>低延迟：</strong>用户自动连接到最近的节点，减少查询往返时间</li>
+    <li><strong>负载分担：</strong>流量均匀分布到多个节点，避免单点瓶颈</li>
+    <li><strong>自动故障切换：</strong>节点故障时 BGP 自动收敛，流量切换到其他可用节点</li>
+    <li><strong>抗 DDoS：</strong>攻击流量被分散到多个节点和运营商，提升了抗攻击能力</li>
+  </ul>
+
+  <h2>关键注意事项</h2>
+  <div class="note"><p><strong>BGP 收敛时间：</strong>节点故障后 BGP 收敛通常需要 30-120 秒，在此期间部分流量仍会发往故障节点。建议配合健康检查机制加速故障检测。</p></div>
+  <p><strong>Zone 同步：</strong>所有节点必须保持 Zone 数据一致。建议使用隐藏主服务器（Hidden Master）集中管理 Zone 数据，节点通过 IXFR 增量同步。</p>
+  <p><strong>监控：</strong>部署 Anycast 后需要监控每个节点的独立状态、BGP 会话状态和各节点的 DNS 查询延迟。建议使用 Prometheus + Blackbox Exporter。</p>
+  <p><strong>EDNS Client Subnet：</strong>在一些场景下需要结合 ECS 扩展来传递用户的真实子网信息，确保就近解析策略在 CDN 等场景下也能正常工作。</p>
+</div>
+</body>
+</html>
